@@ -17,26 +17,67 @@ def main():
  clus would be Fermi Pico.'''.format(NUM_DIGITS))
 
 
-while True:
-    secretNum = getSecretNum()
-    print('I have thought of a number')
-    print(' You have {} gueeses to get it.'.format(MAX_GUESSES))
+    while True:
+        secretNum = getSecretNum()
+        print('I have thought of a number')
+        print(' You have {} gueeses to get it.'.format(MAX_GUESSES))
 
-    numGuesses = 1 #counter to keep track of number of guesses
-    while numGuesses <=MAX_GUESSES:
-        guess = ''
-        while len(guess) !=NUM_DIGITS or not guess.isdecimal(): #input validation length and numbers
-            print('Guess #{}:'.format(numGuesses))
-            guess = input('> ')
+        numGuesses = 1 #counter to keep track of number of guesses
+        while numGuesses <=MAX_GUESSES:
+            guess = ''
+            while len(guess) !=NUM_DIGITS or not guess.isdecimal(): #input validation length and numbers
+                print('Guess #{}:'.format(numGuesses))
+                guess = input('> ')
 
-        clues = getClues(guess, secretNum)
-        print(clues)
-        numGuesses += 1
+            clues = getClues(guess, secretNum)
+            print(clues)
+            numGuesses += 1
 
-        if guess == secretNum:
-            break       #correct guess break out of loop
-        if numGuesses > MAX_GUESSES:
-            print("You ran out of guesses")
-            print("The answer was {}".format(secretNum))
+            if guess == secretNum:
+                break       #correct guess break out of loop
+            if numGuesses > MAX_GUESSES:
+                print("You ran out of guesses")
+                print("The answer was {}".format(secretNum))
 
-    print('Do you want to play again ?')
+        print('Do you want to play again ?')
+        if not input('>').lower().startswith('yes'):
+            break
+    print('Thanks for playing!!!')
+
+def getSecretNum():
+    """Returns a string made up of NUM_DIGITS unique random digits."""
+    numbers = list('0123456789')
+    random.shuffle(numbers)
+
+    secretNum = ''
+    for i in range(NUM_DIGITS):
+        secretNum += str(numbers[i])
+    return secretNum
+
+
+def getClues(guess, secretNum):
+    """ Returns a string with pico, fermi, bagels clues for a guess
+        and secret number pair."""
+    if guess == secretNum:
+        return 'Ya got it!!'
+    
+    clues = []
+
+    for i in range(len(guess)):
+        if guess[i] == secretNum[i]:
+            clues.append('Fermi') #correct digit at correct place
+        elif guess[i] in secretNum:
+            clues.append('pico') #correct digit but wrong place
+    
+    if len(clues) == 0:
+        return 'Bagels'
+    
+    else:
+        clues.sort()
+
+        return ''.join(clues)
+    
+
+if __name__ == '__main__':
+    main()
+
