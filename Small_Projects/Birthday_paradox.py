@@ -1,66 +1,62 @@
 import datetime, random
 
-
-def getBirthdays(NosOfBdays):
-    """Returns a list of number random date objs for bdays"""
+def getBirthdays(n):
+    """Returns a list of n random date objects for birthdays."""
     birthdays = []
-    for i in range(NosOfBdays):
-        startOfYear = datetime.date(2001,1,1)
-
-        #getting a random day into the year
-        randomNumberOfDays = datetime.timedelta(random.randint(0, 364))
-        birthday = startOfYear + randomNumberOfDays
-        birthdays.append(birthday)
+    startOfYear = datetime.date(2001, 1, 1)
+    for _ in range(n):
+        randomDays = datetime.timedelta(random.randint(0, 364))
+        birthdays.append(startOfYear + randomDays)
     return birthdays
 
 
 def getMatch(birthdays):
-    """Returns the date obj of a bday that occurs more than once in the bdays list."""
+    """Returns the date object of a birthday that appears more than once."""
     if len(birthdays) == len(set(birthdays)):
-        return None # All birthdays are unique, so return None.
+        return None
     
-    #compare each bday to every other bday
-    for a, birthdayA in enumerate(birthdays):
-        for b, birthdayB in enumerate(birthdays[a + 1 :]):
-            if birthdayA == birthdayB:
-                return birthdayA #Return the matching bday
-            
+    # Check for duplicates
+    seen = set()
+    for bday in birthdays:
+        if bday in seen:
+            return bday
+        seen.add(bday)
+    return None
 
-#display the intro
+
+# Display intro
 print('This is the Birthday Paradox Problem')
 
-
-#Setting up a tuple of month names in order
 MONTHS = ('Jan', 'Feb','Mar','Apr','May','Jun',
           'Jul','Aug','Sep','Oct','Nov','Dec')
 
+# Ask user for number
 while True:
-    print("How many birthday shall I generate ? (Max 100)")
-    response = input('>')
-    if response.isdecimal() and (0 < int(response)<=100):
+    response = input("How many birthdays shall I generate? (Max 100)\n>")
+    if response.isdecimal() and (0 < int(response) <= 100):
         numBdays = int(response)
         break
 print()
 
-#generate and display the bdays
-print('Here are', numBdays, 'birthdays:'):
+# Generate and display birthdays
+print('Here are', numBdays, 'birthdays:')
 birthdays = getBirthdays(numBdays)
-for i, birthdays in enumerate(birthdays):
-    if i != 0:
-        print(',', end = '')
 
-print()
-print()
+for i, bday in enumerate(birthdays):
+    if i > 0:
+        print(", ", end="")
+    print(f"{MONTHS[bday.month - 1]} {bday.day}", end="")
 
-#determining if there are two bdays that match
+print("\n")
+
+# Determine if matches exist
 match = getMatch(birthdays)
 
-#displaying the results
-print('In this simulation,', end = '')
-if match != None:
+# Display results
+print("In this simulation,", end=" ")
+if match is not None:
     monthName = MONTHS[match.month - 1]
-    dateText = '{} {}'.format(monthName, match.day)
-    print('multiple people have a birthday on', dateText)
+    print(f"multiple people have a birthday on {monthName} {match.day}.")
 else:
-    print("there are no matching birthdays")
+    print("there are no matching birthdays.")
 print()
